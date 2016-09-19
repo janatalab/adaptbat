@@ -1,13 +1,13 @@
 function[] = BAT_adaptive_phase(subject)
-%Ex: BAT_adaptive_phase('JR1')
 
+%
 % Adaptive phase shift version of the Beat Alignment Test, version 2
 % Written by Jessica Ross, March 2016
-
+%
 % Iversen, JR, Patel, AD. The Beat Alignment Test (BAT): Surveying beat processing 
 % abilities in the general population. Proceedings of the 10th International Conference
 % on Music Perception and Cognition 2008: 465-468. 
-
+%
 % Discriminate between correct phase and shifted (forward or back) phase. The 12 stimuli from
 % the BAT are used. Trial 1 and 2 have correct phases. Trial 3 has a phase that
 % has been shifted by 30%. For each trial after trial 3, an incorrect
@@ -17,12 +17,17 @@ function[] = BAT_adaptive_phase(subject)
 % response will result in the next trial using the same shift as the previous
 % trial, but with a new musical stimulus. Forward and backward shifts
 % are alternated.
-
-%OUTPUT FILE:
-%Column 1 = subject's response (off beat = 0, on beat = 1)
-%Column 2 = augmentation condition (off beat = 0, on beat = 1)
-%Column 3 = augmentation amount (0%, -10%, 10%, etc...)
-%Column 4 = correct/incorrect (incorrect response = 1, correct response = 2)
+%
+% INPUT:
+%     subject - subject ID string (e.g., 'JR1')
+%
+% OUTPUT FILE:
+%     Column 1 = subject's response (off beat = 0, on beat = 1)
+%     Column 2 = augmentation condition (off beat = 0, on beat = 1)
+%     Column 3 = augmentation amount (0%, -10%, 10%, etc...)
+%     Column 4 = correct/incorrect (incorrect response = 1, correct response = 2)
+%
+% Cleaned and optimized code - Sept 2016 BH
 
 Screen('Preference', 'VisualDebugLevel', 1);
 Screen('Preference', 'SkipSyncTests', 1);
@@ -62,7 +67,11 @@ topPriorityLevel = MaxPriority(window);
 Screen('TextSize',window, 30);
 Screen('TextFont',window,'Ariel');
 Screen('TextStyle', window, 1);
-textString = 'Welcome to the experiment. \n\n\n\n\n Please listen to each musical excerpt and judge whether the \n click track is on beat or off beat. \n\n Respond at the end of each musical excerpt by \n pressing q if the tone is off beat \n or p if the tone is on beat. \n\n This should take about 7 minutes.';
+textString = ['Welcome to the experiment. \n\n\n\n\n Please listen to each ' ... 
+    'musical excerpt and judge whether the \n click track is on beat or off ' ...
+    'beat. \n\n Respond at the end of each musical excerpt by \n pressing q ' ...
+    'if the tone is off beat \n or p if the tone is on beat. \n\n This should ' ... 
+    'take about 7 minutes.';]
 DrawFormattedText(window, textString, 'center', 'center', white);
 
 Screen('TextSize',window, 15);
@@ -143,9 +152,13 @@ offp20 = dir([data_loc,'*_P20_v2.wav']);dirlist_offp20 = {offp20.name};
 offp30 = dir([data_loc,'*_P30_v2.wav']);dirlist_offp30 = {offp30.name};
 
 wavfilename = [];
-aug_intervals = [on0 offn1 offn2 offn3 offn4 offn5 offn6 offn7 offn8 offn9 offn10 offn15 offn20 offn30 offp1 offp2 offp3 offp4 offp5 offp6 offp7 offp8 offp9 offp10 offp15 offp20 offp30];
-aug_cols = [1,27,14,13,26,25,12,11,24,23,10,1,1,9,22,21,8,7,20,1,1,19,6,5,18,1,1,17,4,16,16,3,3,15,15,2,2,1,1,1,1,1,1,1,1,1,1,1,1];
-aug_amount = [0 30 -30 -20 20 15 -15 -10 10 9 -9 0 0 -8 8 7 -7 -6 6 0 0 5 -5 -4 4 0 0 3 -3 2 2 -2 -2 1 1 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0];
+aug_intervals = [on0 offn1 offn2 offn3 offn4 offn5 offn6 offn7 offn8 offn9 ...
+    offn10 offn15 offn20 offn30 offp1 offp2 offp3 offp4 offp5 offp6 offp7 ...
+    offp8 offp9 offp10 offp15 offp20 offp30];
+aug_cols = [1,27,14,13,26,25,12,11,24,23,10,1,1,9,22,21,8,7,20,1,1,19,6,5, ...
+    18,1,1,17,4,16,16,3,3,15,15,2,2,1,1,1,1,1,1,1,1,1,1,1,1];
+aug_amount = [0 30 -30 -20 20 15 -15 -10 10 9 -9 0 0 -8 8 7 -7 -6 6 0 0 5 -5 ... 
+    -4 4 0 0 3 -3 2 2 -2 -2 1 1 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0];
 
 trial_order = {};
 k = randperm(12);
