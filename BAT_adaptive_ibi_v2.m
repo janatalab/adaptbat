@@ -35,7 +35,7 @@ function[] = BAT_adaptive_ibi_v2(subject)
 
 Screen('Preference', 'VisualDebugLevel', 1);
 Screen('Preference', 'SkipSyncTests', 1);
-HideCursor;
+%HideCursor;
 PsychDefaultSetup(2);
 
 %Set screen number to my one screen (this can detect multiple displays if
@@ -51,7 +51,7 @@ black = BlackIndex(screenNum);
 escapeKey = KbName('ESCAPE');
 NO = KbName('q'); % No (off beat) is q during experiment, and 0 in output file
 YES = KbName('p'); % Yes (on beat) is p during experiment, and 1 in output file
-downKey = KbName('DownArrow');
+% downKey = KbName('DownArrow');
 
 %instruction_screen____________________________
 %Black screen appears first
@@ -71,32 +71,31 @@ topPriorityLevel = MaxPriority(window);
 Screen('TextSize',window, 30);
 Screen('TextFont',window,'Ariel');
 Screen('TextStyle', window, 1);
-textString = ['Welcome to the experiment. \n\n\n\n\n Please listen to each' ...
-  'musical excerpt and judge whether the \n click track is on beat or off ' ...
-  'beat. \n\n Respond at the end of each musical excerpt by \n pressing ' ...
-  'q if the tone is off beat \n or p if the tone is on beat. \n\n This ' ...
+textString = ['Welcome to the experiment. \n\n\n\n\n Please listen to each ' ...
+  'musical excerpt and judge whether the click track is on-beat or off-' ...
+  'beat. \n\n\n Respond at the end of each musical excerpt by pressing ' ...
+  'Q if the tone is off-beat or P if the tone is on-beat. \n\n\n This ' ...
   'should take about 7 minutes.'];
-DrawFormattedText(window, textString, 'center', 'center', white);
+DrawFormattedText(window, textString, 'center', 'center', white, 60);
 
 Screen('TextSize',window, 15);
-textString = ['\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n'...
-  '< Press any key to continue >'];
-DrawFormattedText(window, textString, 'center', 'center', white);
+textString = '< Press any key to continue >';
+DrawFormattedText(window, textString, 'center', 1000, white);
 
 Screen('Flip', window);
 KbStrokeWait;
 tic
 %_____________________________
 
-resp_tbl = cell2table(cell(26,4), 'VariableNames', {'response','aug_cond',
-  'aug_trial','score'});
+resp_tbl = cell2table(cell(26,4), 'VariableNames', {
+  'response','aug_cond','aug_trial','score'
+  });
+
 %responses = zeros(26,4);
 
-% screenNum=0;
-% [window, rect] = Screen('OpenWindow', screenNum, 1);
-% [X,Y] = RectCenter(rect);
-FixCross = [X-1,Y-40,X+1,Y+40;X-40,Y-1,X+40,Y+1];
-Screen('FillRect', window, [255,255,255], FixCross');
+Screen('TextSize',window, 30);
+textString = 'Press Q for off-beat, P for on-beat';
+DrawFormattedText(window, textString, 'center', 'center', white)
 Screen('Flip', window);
 WaitSecs(2)
 
@@ -128,7 +127,8 @@ pahandle = PsychPortAudio('Open', [], 1, 1, freq, nrchannels);
 % Set the volume to half for this demo
 PsychPortAudio('Volume', pahandle, 0.5);
 
-% PUT THIS IN PARAMS FILE
+
+%% TASK SPECIFIC CODE
 % Get wav file names and categorize them by augmentation interval
 data_loc =  'C:\Users\janatalab\Documents\BAT\stimuli_adaptive_short\';
 on0 = dir([data_loc,'*_B0_v2.wav']);dirlist_on0 = {on0.name};
@@ -154,15 +154,8 @@ offp9 = dir([data_loc,'*_B9_v2.wav']);dirlist_offp9 = {offp9.name};
 offp10 = dir([data_loc,'*_B10_v2.wav']);dirlist_offp10 = {offp10.name};
 
 wavfilename = [];
-% aug_intervals = [on0 offn1 offn2 offn3 offn4 offn5 offn6 offn7 offn8 offn9 ...
-%     offn10 offp1 offp2 offp3 offp4 offp5 offp6 offp7 offp8 offp9 offp10];
-% aug_cols = [1,21,11,20,10,19,9,18,8,1,1,17,17,7,7,16,16,6,6,15,15,1,1,5,5, ...
-%     14,14,4,4,1,1,13,13,3,3,12,12,2,2,1,1,1,1,1,1,1,1,1,1,1,1];
-% aug_amount = [0 10 -10 9 -9 8 -8 7 -7 0 0 6 6 -6 -6 5 5 -5 -5 4 4 0 0 -4 -4 ...
-%     3 3 -3 -3 0 0 2 2 -2 -2 1 1 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0];
 
 % initialize trial info
-
 aug_intervals = [on0 offn1 offn2 offn3 offn4 offn5 offn6 offn7 offn8 offn9 ...
   offn10 offp1 offp2 offp3 offp4 offp5 offp6 offp7 offp8 offp9 offp10];
 aug_cols = [1,21,11,20,10,19,9,18,8,1,1,17,17,7,7,16,16,6,6,15,15,1,1,5,5, ...
@@ -170,10 +163,9 @@ aug_cols = [1,21,11,20,10,19,9,18,8,1,1,17,17,7,7,16,16,6,6,15,15,1,1,5,5, ...
 aug_amount = [0 10 -10 9 -9 8 -8 7 -7 0 0 6 6 -6 -6 5 5 -5 -5 4 4 0 0 -4 -4 ...
   3 3 -3 -3 0 0 2 2 -2 -2 1 1 -1 -1 0 0 0 0 0 0 0 0 0 0 0 0];
 
-num_trials = 26; % This could go in params
-trial_order = {};
+num_trials = 26;
+trial_order = cell(num_trials,1);
 k = randperm(12);
-
 
 for trial_number = 1:num_trials
   
@@ -187,7 +179,7 @@ for trial_number = 1:num_trials
       trial_order{trial_number} = char(song);
       
       %Start with an on beat stimulus
-      wavfilename = [data_loc aug_intervals(k(1),1).name];
+      wavfilename = [data_loc stim];
       aug_cond = 1;
       aug_trial = 0;
       
@@ -209,12 +201,12 @@ for trial_number = 1:num_trials
       respToBeMade = true;
       while respToBeMade == true
         
-        [keyIsDown,secs, keyCode] = KbCheck;
+        [~,~, keyCode] = KbCheck;
         if keyCode(YES)
-          response = 1;
+          response = 'yes';
           respToBeMade = false;
         elseif keyCode(NO)
-          response = 0;
+          response = 'no';
           respToBeMade = false;
         elseif keyCode(escapeKey)
           sca;
@@ -222,39 +214,24 @@ for trial_number = 1:num_trials
         
       end
       
-      responses(trial_number,1) = response;
-      responses(trial_number,2) = aug_cond;
-      responses(trial_number,3) = aug_trial;
+      resp_tbl.response{trial_number} = response;
+      resp_tbl.aug_cond{trial_number} = aug_cond;
+      resp_tbl.aug_trial{trial_number} = aug_trial;
       
-      % 1 is incorrect, 2 is correct
+      % log score
       if response == 1
-        score = 2;
+        score = 'correct';
       elseif response == 0
-        score = 1;
+        score = 'incorrect';
       end
-      
-      responses(trial_number,4) = score;
+      resp_tbl.score{trial_number} = score;
+            
+      % second element in progression array for Trial 2
+      aug_col = aug_cols(2);
+      aug_trial = aug_amount(2);
+
       
     case 2 % for trial 2
-      
-      x = 2;
-      last = responses((trial_number),4);
-      if last == 1 % 1=incorrect
-        aug_col = aug_cols(x);
-        aug_trial = aug_amount(x);
-      elseif last == 2 % 2=correct
-        %         previous = responses((trial_number-1),4);
-        %         if previous == 2
-        aug_col = aug_cols(x);
-        aug_trial = aug_amount(x);
-        
-        % NOT SURE WHAT THE FOLLOWING CODE IS FOR. WHAT OTHER RESPONSE
-        % CONDITIONS WOULD THERE BE OTHER THAN CORRECT OR INCORRECT? - BH
-%       else
-%         aug_col = aug_cols(x-1);
-%         aug_trial = aug_amount(x-1);
-      end
-      
       k = randperm(12);
       
       %Get stimulus and make sure it isn't a repeat
@@ -266,10 +243,14 @@ for trial_number = 1:num_trials
       song = stim(1:3);
       trial_order{trial_number} = char(song);
       
-      %Start with an on beat stimulus
-      wavfilename = [data_loc aug_intervals(k(1),1).name];
-      aug_cond = 1;
-      aug_trial = 0;
+      wavfilename = [data_loc aug_intervals(k(1),aug_col).name];
+      
+      % looks like aug_col = 1 means on-beat
+      if aug_col == 1
+        aug_cond = 1;
+      else
+        aug_cond = 0;
+      end
       
       % Read WAV file from filesystem:
       [y, freq] = audioread(wavfilename);
@@ -314,9 +295,132 @@ for trial_number = 1:num_trials
       end
       
       responses(trial_number,4) = score;
-  
+      
       
     otherwise % for trials 3-end
+      k = randperm(12);
+      
+      %Get stimulus and make sure it isn't a repeat
+      if trial_order{trial_number-1} == aug_intervals(k(1),aug_col).name(1:3)
+        stim = aug_intervals(k(2),aug_col).name;
+      else
+        stim = aug_intervals(k(1),aug_col).name;
+      end
+      song = stim(1:3);
+      trial_order{trial_number} = char(song);
+      
+      %Now start the adaptive part, beginning with 10% augmented ibi (column 21)
+      wavfilename = [data_loc aug_intervals(k(1),aug_col).name];
+      if aug_col == 1
+        aug_cond = 1;
+        
+      else
+        aug_cond = 0;
+      end
+      
+      % Read WAV file from filesystem:
+      [y, freq] = audioread(wavfilename);
+      wavdata = y';
+      nrchannels = size(wavdata,1); % Number of rows == number of channels.
+      
+      % Wait 0.5 s before starting
+      WaitSecs(0.5);
+      
+      % Fill the audio playback buffer with the audio data
+      PsychPortAudio('FillBuffer', pahandle, [wavdata; wavdata]);
+      
+      % Start audio playback
+      PsychPortAudio('Start', pahandle, repetitions, startCue, waitForDeviceStart);
+      
+      % Collect keyboard response: on beat/YES = p, off beat/NO = q
+      respToBeMade = true;
+      if aug_col == 1
+        while respToBeMade == true
+          [keyIsDown,secs, keyCode] = KbCheck;
+          if keyCode(YES)
+            response = 1;
+            respToBeMade = false;
+          elseif keyCode(NO)
+            response = 0;
+            respToBeMade = false;
+          elseif keyCode(escapeKey)
+            sca;
+          end
+        end
+        
+        responses(trial_number,1) = response;
+        responses(trial_number,2) = aug_cond;
+        responses(trial_number,3) = aug_trial;
+        
+        % 1 is incorrect, 2 is correct
+        if response == 1
+          score = 2;
+        elseif response == 0
+          score = 1;
+        end
+        
+        responses(trial_number,4) = score;
+        
+        last = responses((trial_number),4);
+        if last == 1 % 1=incorrect
+          x = x-1;
+          aug_col = aug_cols(x);
+          aug_trial = aug_amount(x);
+        elseif last == 2 % 2=correct
+          previous = responses((trial_number-1),4);
+          if previous == 2
+            x = x + 2;
+            aug_col = aug_cols(x);
+            aug_trial = aug_amount(x);
+          else x = x + 1;
+            aug_col = aug_cols(x);
+            aug_trial = aug_amount(x);
+          end
+        end
+      else
+        while respToBeMade == true
+          [keyIsDown,secs, keyCode] = KbCheck;
+          if keyCode(YES)
+            response = 1;
+            respToBeMade = false;
+          elseif keyCode(NO)
+            response = 0;
+            respToBeMade = false;
+          elseif keyCode(escapeKey)
+            sca;
+          end
+        end
+        
+        responses(trial_number,1) = response;
+        responses(trial_number,2) = aug_cond;
+        responses(trial_number,3) = aug_trial;
+        
+        % 1 is incorrect, 2 is correct
+        if response == 1
+          score = 1;
+        elseif response == 0
+          score = 2;
+        end
+        
+        responses(trial_number,4) = score;
+        
+        last = responses((trial_number),4);
+        if last == 1 % 1=incorrect
+          x = x-1;
+          aug_col = aug_cols(x);
+          aug_trial = aug_amount(x);
+        elseif last == 2 % 2=correct
+          previous = responses((trial_number-1),4);
+          if previous == 2
+            x = x + 2;
+            aug_col = aug_cols(x);
+            aug_trial = aug_amount(x);
+          else x = x + 1;
+            aug_col = aug_cols(x);
+            aug_trial = aug_amount(x);
+          end
+        end
+      end
       
   end % switch trial_number
   
