@@ -219,9 +219,9 @@ for trial_number = 1:num_trials
       resp_tbl.aug_trial{trial_number} = aug_trial;
       
       % log score
-      if response == 1
+      if strcmp(response,'yes')
         score = 'correct';
-      elseif response == 0
+      elseif strcmp(response,'no')
         score = 'incorrect';
       end
       resp_tbl.score{trial_number} = score;
@@ -272,10 +272,10 @@ for trial_number = 1:num_trials
         
         [keyIsDown,secs, keyCode] = KbCheck;
         if keyCode(YES)
-          response = 1;
+          response = 'yes';
           respToBeMade = false;
         elseif keyCode(NO)
-          response = 0;
+          response = 'no';
           respToBeMade = false;
         elseif keyCode(escapeKey)
           sca;
@@ -283,9 +283,9 @@ for trial_number = 1:num_trials
         
       end
       
-      responses(trial_number,1) = response;
-      responses(trial_number,2) = aug_cond;
-      responses(trial_number,3) = aug_trial;
+      resp_tbl.response{trial_number} = response;
+      resp_tbl.aug_cond{trial_number} = aug_cond;
+      resp_tbl.aug_trial{trial_number} = aug_trial;
       
       % 1 is incorrect, 2 is correct
       if response == 1
@@ -294,7 +294,7 @@ for trial_number = 1:num_trials
         score = 1;
       end
       
-      responses(trial_number,4) = score;
+      resp_tbl.score{trial_number} = score;
       
       
     otherwise % for trials 3-end
@@ -348,14 +348,14 @@ for trial_number = 1:num_trials
           end
         end
         
-        responses(trial_number,1) = response;
-        responses(trial_number,2) = aug_cond;
-        responses(trial_number,3) = aug_trial;
+        resp_tbl.response{trial_number} = response;
+        resp_tbl.response{trial_number} = aug_cond;
+        resp_tbl.aug)trial{trial_number} = aug_trial;
         
         % 1 is incorrect, 2 is correct
-        if response == 1
+        if response == 'yes'
           score = 2;
-        elseif response == 0
+        elseif response == 'no'
           score = 1;
         end
         
@@ -391,9 +391,9 @@ for trial_number = 1:num_trials
           end
         end
         
-        responses(trial_number,1) = response;
-        responses(trial_number,2) = aug_cond;
-        responses(trial_number,3) = aug_trial;
+        resp_tbl.response{trial_number} = response;
+        resp_tbl.aug_cond{trial_number} = aug_cond;
+        resp_tbl.aug_trial{trial_number} = aug_trial;
         
         % 1 is incorrect, 2 is correct
         if response == 1
@@ -402,7 +402,7 @@ for trial_number = 1:num_trials
           score = 2;
         end
         
-        responses(trial_number,4) = score;
+        resp_tbl.score{trial_number} = score;
         
         last = responses((trial_number),4);
         if last == 1 % 1=incorrect
@@ -426,7 +426,7 @@ for trial_number = 1:num_trials
   
 end % for trial_number
 
-
+%% old code
 
 for trial_number = 2;
   k = randperm(12);
