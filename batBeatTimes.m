@@ -31,7 +31,7 @@ else %songs
   %logdir = fullfile(G.paths.root, 'projects','bat','ITI');
   %fix this to point at the directory of ITI data -- this works only if calling
   %from directory where this mfile resides
-  logdir = './ITI';
+  logdir = '/Users/bkhurley/svn/private/matlab/projects/attmap/bat/ITI';
   
   try,
   mfilename = fullfile(logdir, ['ji_' excerpt '2.txt']);
