@@ -6,8 +6,8 @@ function params = bat_params
 % 4 Oct 2016 Brian Hurley
 
 % file paths
-params.stim_fpath = '/data0/stimuli/audio/bat/stimuli/';
-params.data_fpath = '/data1/attmap/attmap_altstim/subject_data/bat_data/';
+params.stim_fpath = 'C:\Users\janatalab\Documents\BAT\stimuli'; % '/data0/stimuli/audio/bat/stimuli/';
+params.data_fpath = 'C:\Users\janatalab\Documents\BAT\subject_data\attmap_altstim';% '/data1/attmap/attmap_altstim/subject_data/bat_data/';
 params.ibi_outdata_fname = 'bat_ibi_zest.csv';
 params.phase_outdata_fname = 'bat_phase_zest.csv';
 
