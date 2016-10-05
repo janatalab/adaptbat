@@ -1,9 +1,12 @@
-function timing = batBeatTimes(excerpt)
+function timing = batBeatTimes(excerpt, ITI_dir)
 %batBeatTimes  get beat times for BAT stimuli
 %
-%   timing = batBeatTimes(excerpt)
+%   timing = batBeatTimes(excerpt, ITI_dir)
 %
 %     excerpt is name of song, or iso350, iso600, iso850
+%     ITI is file directory where beat timing data for each stim live
+%         - Note: if creating iso stims, pass any string as second param
+%         (e.g., ' ') as this input will be ignored
 %
 %   timing.IBI = mean IBI, ms
 %   timing.t   = beat times (as tapped by JRI, mean of multiple runs), ms
@@ -11,8 +14,9 @@ function timing = batBeatTimes(excerpt)
 %   
 %
 % JRI 5/12/08
-
-global G
+% 
+% BKH 5 Oct 2016 - modified so that IBI directory is passed in as second
+% parameter rather than hard-coded.
 
 if strncmp(excerpt,'iso',3),
   ioi = str2num(excerpt(4:end));
@@ -28,14 +32,10 @@ if strncmp(excerpt,'iso',3),
   
 else %songs
   
-  %logdir = fullfile(G.paths.root, 'projects','bat','ITI');
-  %fix this to point at the directory of ITI data -- this works only if calling
-  %from directory where this mfile resides
-  logdir = '/Users/bkhurley/svn/private/matlab/projects/attmap/bat/ITI';
   
-  try,
-  mfilename = fullfile(logdir, ['ji_' excerpt '2.txt']);
-  times = load(mfilename);
+  try
+    mfilename = fullfile(ITI_dir, ['ji_' excerpt '2.txt']);
+    times = load(mfilename);
   catch
     timing.excerpt = excerpt;
     timing.IBI = [];

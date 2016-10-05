@@ -1,4 +1,4 @@
-function bat_stim = mkbat3(deviation, type, excerpts, indir, outdir)
+function bat_stim = mkbat3(deviation, type, excerpts, params)
 % make bat stimuli, version 3.0
 %
 %   originals used mean ITI of my tapping along with the excerpts
@@ -40,7 +40,7 @@ n_excerpts = length(excerpts);
 % iterate through excerpts
 for iE = 1:n_excerpts
     
-    timing = batBeatTimes(excerpts{iE});
+    timing = batBeatTimes(excerpts{iE},params.IBI_fpath);
     taps = timing.t;
     ITIm = timing.IBI;
     
@@ -85,8 +85,9 @@ for iE = 1:n_excerpts
         end
         
         beats = beats/1000; %ms to s
-        excerptFname = fullfile(indir,[excerpts{iE} '.WAV']);
-        outfname = fullfile(outdir,[excerpts{iE} '_' type{iS} num2str(deviation(iS)) '_v3.wav']);
+        excerptFname = fullfile(params.stim_fpath,[excerpts{iE} '.WAV']);
+        outfname = fullfile(params.stim_fpath,[excerpts{iE} '_' type{iS} ...
+          num2str(deviation(iS)) '_v3.wav']);
   
         %superimpose beeps at times in beats vector
         bat_stim = mkbatstim_out(excerptFname, toneFreq, beats, outfname);

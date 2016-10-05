@@ -32,6 +32,21 @@ function BAT_adaptive_ibi_v2(subject, type, params)
 
 %% PSYCHTOOLBOX CODE
 
+% Make sure we start with PsychPortAudio closed so that soundcard is not
+% blocked
+PsychPortAudio('Close');
+
+% Initialize Sounddriver
+InitializePsychSound(1);
+
+% Open Psych-Audio port, with the follow arguements
+% (1) [] = default sound device
+% (2) 1 = sound playback only
+% (3) 1 = default level of latency
+% (4) Requested frequency in samples per second
+% (5) 2 = stereo putput
+pahandle = PsychPortAudio('Open', [], 1, 1, params.freq, params.nrchannels);
+
 % Keyboard Information
 escapeKey = KbName('ESCAPE');
 NO = KbName('q'); % Q key = NO
@@ -59,7 +74,7 @@ resp_tbl = cell2table(cell(max_offbeat_trials,length(out_data_vars)), ...
 % INITIALIZE ZEST HERE
 % if (second) params input given, zest ignores (first) response input
 % position and intializes zest...hence NaN
-[mean_pdf, ~] = zest(NaN, params.zest);
+mean_pdf = zest(NaN, params.zest);
 
 for trial_number = 1:max_offbeat_trials
     
@@ -97,7 +112,7 @@ for trial_number = 1:max_offbeat_trials
     % for on-beat trials, generate stim w/ on-beat metronome
     if strcmp(aug_cond,'onbeat')
         deviation = 0;
-        stim_wvf = mkbat3(deviation, type, song, params.stim_dir, params.stim_dir);
+        stim_wvf = mkbat3(deviation, type, song, params);
         stim_wvf = stim_wvf';
         
         % not tracking thresh metrics on catch trials
@@ -118,7 +133,7 @@ for trial_number = 1:max_offbeat_trials
         end
         
         % generate stimulus
-        stim_wvf = mkbat3(deviation, type, song, params.stim_dir, outdir);
+        stim_wvf = mkbat3(deviation, type, song, params);
         stim_wvf = stim_wvf';
         
     end
@@ -167,10 +182,11 @@ for trial_number = 1:max_offbeat_trials
     resp_tbl.excerpt{trial_number} = song;
     
     % if it's an off-beat trial, estimate threshold
+    % for the ZEST function, 1 is correct response, 0 is incorrect response
     if strcmp(aug_cond, 'offbeat')
-        if scrcmp(response, 'yes')
+        if strcmp(response, 'no')
             zest_resp = 1;
-        elseif strcmp(response, 'no')
+        elseif strcmp(response, 'yes')
             zest_resp = 0;
         end
         
@@ -182,7 +198,7 @@ for trial_number = 1:max_offbeat_trials
         
         % check for convergence. 
         % if converged, stop the trial_number loop (i.e. stop delivering stims)
-        if sd_pdf <= params.zest.sd_stop || trial_number == max_offbeat_trials
+        if sd_pdf <= params.zest.sd_stop || offbeat_trial_counter == max_offbeat_trials
             resp_tbl.converged{trial_number} = 1;
             break
         else
@@ -196,9 +212,10 @@ end % for trial_number
 
 % write data to file
 out_fname = fullfile(params.data_fpath, sprintf(['%s_' params.ibi_outdata_fname], subject));
-csvwrite(out_fname,resp_tbl);
+writetable(resp_tbl, out_fname);
 
-elapsedTime = toc;
-fprintf(fid,'\n %f', elapsedTime);
+%%
+% close PsychPortAudio
+PsychportAudio('Close', pahandle);
 
-close all
+end
