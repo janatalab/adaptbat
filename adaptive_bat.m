@@ -1,4 +1,4 @@
-function BAT_adaptive_ibi_v2(subject, type, ptb, params)
+function adaptive_bat(subject, type, ptb, params)
 
 % Adaptive inter-beat interval version of the Beat Alignment Test, version
 % 2. See the following paper for more info on the BAT test:
