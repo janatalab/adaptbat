@@ -44,7 +44,7 @@ params.ibi.zest.zesteta = 0; %eta in the text, "sweat factor" or response criter
 
 % stopping criteria
 params.ibi.zest.sd_stop = 1.15; % threshold algorithm stops when SD of PDF < or = this value
-params.ibi.zest.max_trials = 20; % if SD value criterion not met, stops after 20 trials
+params.ibi.zest.max_trials = 2; % if SD value criterion not met, stops after 20 trials
 
 % variables that should be reverted back to non-log units
 params.ibi.zest.zestconvert = {'delta_L', 'sd_pdf'};

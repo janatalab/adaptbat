@@ -54,21 +54,26 @@ KbStrokeWait;
 
 % subject will see abbreviated on-screen instructions throughout task
 Screen('TextSize',ptb.window, 30);
-textString = 'When music ends\n\n\nPress Q for off-beat, P for on-beat';
-DrawFormattedText(ptb.window, textString, 'center', 'center', ptb.white);
+trial_textString = 'When music ends\n\n\nPress Q for off-beat, P for on-beat';
+DrawFormattedText(ptb.window, trial_textString, 'center', 'center', ptb.white);
 Screen('Flip', ptb.window);
 WaitSecs(2)
 
 %% Audio Initialization
 
-% Make sure we start with PsychPortAudio closed so that soundcard is not
-% blocked
-try 
-  PsychPortAudio('Close');
-end
+% try 
+%   PsychPortAudio('Close');
+% end
 
-% Initialize Sounddriver
-InitializePsychSound(1);
+% Initialize sound driver. If driver open from previous session, will be
+% blocked for current session and will throw error. In that case, close 
+% PsychPortAudio and re-initialize driver
+try
+  InitializePsychSound(1);
+catch
+  PsychPortAudio('Close');
+  InitializePsychSound(1);
+end
 
 % Open Psych-Audio port, with the follow arguements
 % (1) [] = default sound device
