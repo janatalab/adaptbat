@@ -44,7 +44,7 @@ out_data_vars = {'response', 'aug_cond', 'deviation', 'score', ...
 resp_tbl = cell2table(cell(40,length(out_data_vars)), ...
     'VariableNames', out_data_vars);
 
-% INITIALIZE ZEST HERE
+% Initialize ZEST
 % if (second) params input given, zest ignores (first) response input
 % position and intializes zest...hence NaN
 mean_pdf = zest(NaN, params.zest);
@@ -188,6 +188,10 @@ end % for trial_number
 % converge on, we need to trim empty rows from the data table.
 empty_row_idx = cellfun(@isempty,resp_tbl.response);
 resp_tbl(empty_row_idx,:) = [];
+
+% add column for subject_id
+resp_tbl.subject_id = cell(length(resp_tbl.response),1);
+resp_tbl.subject_id(:) = deal({subject});
 
 %% OUTPUT RESULTS TO FILE
 

@@ -7,9 +7,11 @@ function params = bat_params
 
 % file handling
 % NOTE: file paths need to be changed when running BAT on a new computer
-params.stim_fpath = 'C:\Users\janatalab\Documents\BAT\stimuli'; % '/data0/stimuli/audio/bat/stimuli/';
-params.data_fpath = 'C:\Users\janatalab\Documents\BAT\subject_data\attmap_altstim';% '/data1/attmap/attmap_altstim/subject_data/bat_data/';
-params.IBI_fpath = 'C:\Users\janatalab\Documents\svn\private\matlab\projects\attmap\bat\ITI';
+params.stim_fpath = '/data0/stimuli/audio/bat/stimuli/'; %'C:\Users\janatalab\Documents\BAT\stimuli'; 
+params.data_fpath = '/data1/attmap/attmap_altstim/subject_data/bat_data/'; %'C:\Users\janatalab\Documents\BAT\subject_data\attmap_altstim';
+params.IBI_fpath = '~/svn/private/matlab/projects/attmap/bat/ITI/'; %'C:\Users\janatalab\Documents\svn\private\matlab\projects\attmap\bat\ITI';
+params.matpath = '/data1/attmap/attmap_altstim/matfiles/';
+params.tables = '/data1/attmap/attmap_altstim/bat/tables/';
 
 % stims
 params.stim_names = {
