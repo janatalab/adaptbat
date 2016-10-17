@@ -4,14 +4,16 @@ function ptb = bat_initialize_ptb(params)
 % graphics and audio handles in structure array called ptb.
 % 
 % INPUT:
-%     params -- parameter structure array with the following fields:
+%     params: parameter structure array with the following fields:
 %          * freq - frequency at which audio should be played
 %          * nrchannels - 1 (mono) or 2 (stereo) playback
 % OUTPUT:
-%     ptb -- structure array with PsychToolbox object handles that will be
+%     ptb: structure array with PsychToolbox object handles that will be
 %     needed in the experiment function
 %
-% 6 OCT 2016 - Brian K. Hurley
+% Written 6 OCT 2016 by Brian K. Hurley
+%   - Some Psychtoolbox code adapted from BAT_adaptive_ibi.m &
+%       BAT_adaptive_phase.m written by Jessica M. Ross
 
 %% Graphics Initialization
 

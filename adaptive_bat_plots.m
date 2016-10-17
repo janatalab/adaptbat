@@ -105,19 +105,19 @@ if params.plot.subj_traj
                 h1 = plot(trial_vect(curr_test_msk), curr_data(curr_test_msk), '-b', 'linewidth', 1.75);
                 % filled marker for correct-response trials
                 h2 = plot(trial_vect(curr_correct_msk & curr_test_msk), curr_data(curr_correct_msk & curr_test_msk), ...
-                    'bo','markerfacecolor', 'b', 'markersize', 10);
+                    'bo','markerfacecolor', 'b', 'markersize', 7);
                 % open marker for incorrect responses
                 h3 = plot(trial_vect(~curr_correct_msk & curr_test_msk), curr_data(~curr_correct_msk & curr_test_msk), ...
-                    'bo','markerfacecolor', 'w', 'markersize', 10);
+                    'bo','markerfacecolor', 'w', 'markersize', 7);
                 % plot final threshold as triangle
                 h4 = plot(trial_vect(end)+1, curr_thresh, 'b^','markerfacecolor', 'b', ...
-                    'markersize', 10);
+                    'markersize', 7);
                 
                 % plot catch trials
                 h5 = plot(trial_vect(curr_correct_msk & ~curr_test_msk), curr_data(curr_correct_msk & ~curr_test_msk), ...
-                    'bs','markerfacecolor', 'b', 'markersize', 10);
+                    'bs','markerfacecolor', 'b', 'markersize', 7);
                 h6 = plot(trial_vect(~curr_correct_msk & ~curr_test_msk), curr_data(~curr_correct_msk & ~curr_test_msk), ...
-                    'bs','markerfacecolor', 'w', 'markersize', 10);
+                    'bs','markerfacecolor', 'w', 'markersize', 7);
                 
                 
                 if strcmp(this_test, 'tempo')
@@ -135,7 +135,7 @@ if params.plot.subj_traj
                 end
                 
                 set(gca,'xlim', [1 (ntrials+2)])    
-                set(gca,'Xtick',1:(ntrials+2))                
+                set(gca,'Xtick',1:(ntrials))                
                 xlabel('Trial','fontsize',14)
                 ylabel(y_lab,'fontsize',14)
                 

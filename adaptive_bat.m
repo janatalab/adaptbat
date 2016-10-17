@@ -1,33 +1,39 @@
 function adaptive_bat(subject, type, ptb, params)
 
-% Adaptive inter-beat interval version of the Beat Alignment Test, version
-% 2. See the following paper for more info on the BAT test:
-% Iversen, JR, Patel, AD. The Beat Alignment Test (BAT): Surveying beat processing
-% abilities in the general population. Proceedings of the 10th International Conference
-% on Music Perception and Cognition 2008: 465-468.
+% Adaptive threshold version of the Beat Alignment Test.
+
+% Subjects are presented musical stimuli superimposed by a metronome. The
+% metronome is either aligned with the beat or perturbed in phase or tempo
+% with varying magnitude from trial to trial. 20% of trials are catch
+% trials randomly distributed throughout the test. 50% of test trials are
+% negative deviations and 50% are positive (e.g., if tempo, half are reduced
+% tempo and half are increased tempo).
 %
-% Discriminate between correct ibi and augmented ibi. The 12 stimuli from
-% the BAT are used. Trial 1 and 2 have correct ibi's. Trial 3 has an ibi that
-% has been augmented by 10%. For each trial after trial 3, an incorrect
-% response will result in the next trial being easier (using a bigger ibi).
-% 2 correct responses in a row will result in the next trial being harder
-% (using a smaller ibi). A correct response followed by an incorrect
-% response will result in the next trial using the same ibi as the previous
-% trial, but with a new musical stimulus. Lengthened and shortened ibi's
-% are alternated.
+% Perturbation magnitude is determined trial-to-trial by the ZEST threshold
+% algorithm. Trial presentation ends when the threshold stopping criteria
+% are met and the threshold converges on a final estimate.
 %
-% INPUT:
-%     * subject: subject ID string (e.g., 'JR1')
-%     * type: deviant type string. 'B' for ibi test; 'P' for phase test
-%     * ptb: structure array containing PsychToolbox parameters 
-%       (ptb created by the function bat_initialize_ptb.m) 
-%     * params -- structure array with the following fields:
+% The most efficient way to run this function is to call it from the
+% wrapper script BAT.m
+%
+% REQUIRED INPUT:
+%   * subject: subject ID string (e.g., 'JR1')
+%   * type: deviant type string. 'B' for ibi (tempo) test; 'P' for phase test
+%   * ptb: structure array containing PsychToolbox parameters
+%       (ptb params created by the function bat_initialize_ptb.m)
+%   * params: structure array with the following fields:
 %       - stim_fpath: directory path where stim files live (string)
 %       - stim_names: names of all stims (cell of strings)
-%       - data_fpath: directory pth where data files will be written
+%       - data_fpath: directory path where data files will be written
+%       - outdata_fname: name for data file
+%       - zest: structure array containing parameters that control behavior
+%           of the ZEST algorithm
+%       - stim_names: cell array of excert names
+%       - repetitions: number of times the excerpt should repeat upon
+%           playback
 %
 %
-% Written by Brian Hurley, Sept 2016.
+% Written by Brian K. Hurley, Sept 2016.
 %
 
 %% TASK/TRIAL HANDLING
@@ -36,7 +42,7 @@ clear mean_pdf sd_pdf
 max_offbeat_trials = params.zest.max_trials; % doesn't include onbeat catch trials
 offbeat_trial_counter = 0;
 
-% Initialize data table for output. 
+% Initialize data table for output.
 % Initializing with more than enough rows. At the end of this function we
 % trim of empty rows.
 out_data_vars = {'response', 'aug_cond', 'deviation', 'score', ...
@@ -59,7 +65,7 @@ for trial_number = 1:max_offbeat_trials
     switch trial_number
         case 1 % for first trial
             song = params.stim_names{k}(1:3);
-            aug_cond = 'onbeat';            
+            aug_cond = 'onbeat';
         otherwise % all subsequent trials
             % Get stimulus and make sure it isn't a repeat.
             % If current selection matches previous trial, re-select
@@ -93,7 +99,7 @@ for trial_number = 1:max_offbeat_trials
         resp_tbl.sd_pdf{trial_number} = NaN;
         resp_tbl.converged{trial_number} = NaN;
         
-    else % else, generate stim w/ deviation specified by threshold algorithm        
+    else % else, generate stim w/ deviation specified by threshold algorithm
         
         % randomize whether deviation is positive (faster) or
         % negative (slower)
@@ -121,7 +127,7 @@ for trial_number = 1:max_offbeat_trials
     
     % Start audio playback
     PsychPortAudio('Start', ptb.pahandle, params.repetitions, ptb.startCue, ...
-      ptb.waitForDeviceStart);
+        ptb.waitForDeviceStart);
     
     % Collect keyboard response: on beat/YES = p, off beat/NO = q
     respToBeMade = true;
@@ -146,7 +152,7 @@ for trial_number = 1:max_offbeat_trials
         elseif keyCode(ptb.escapeKey)
             sca;
         end
-    end        
+    end
     
     %% Populate data table and update ZEST algorithm for next trial (or final threshold)
     
@@ -167,20 +173,20 @@ for trial_number = 1:max_offbeat_trials
         end
         
         % estmate thresh
-        [mean_pdf, sd_pdf] = zest(zest_resp);        
+        [mean_pdf, sd_pdf] = zest(zest_resp);
         
         resp_tbl.thresh{trial_number} = mean_pdf;
         resp_tbl.sd_pdf{trial_number} = sd_pdf;
         
-        % check for convergence. 
+        % check for convergence.
         % if converged, stop the trial_number loop (i.e. stop delivering stims)
         if sd_pdf <= params.zest.sd_stop || offbeat_trial_counter == max_offbeat_trials
             resp_tbl.converged{trial_number} = 1;
             break
         else
             resp_tbl.converged{trial_number} = 0;
-        end        
-    end    
+        end
+    end
     
 end % for trial_number
 

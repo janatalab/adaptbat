@@ -1,31 +1,32 @@
 function bat_stim = mkbat3(deviation, type, excerpts, params)
-% make bat stimuli, version 3.0
-%
-%   originals used mean ITI of my tapping along with the excerpts
-%   started at first tap after 5 seconds
-%
-%   now we'll construct using actual tap ITIs to define 'on the beat'
-%
-%   tempo cases are scaled. For faster tempo we need to figure out
-%   a sensible way to add additional beeps at the end--do w/ mean ITI?
-%
-%   phase will be using relative phase of surrounding ITIs
-%
-% 30 Sept 2016
 
-% deviation = [0 -10 10 -30 30];
-% type = {'B' 'B' 'B' 'P' 'P'}; %beat and phase perturbations
-
-% excerpts = {'ACL', 'HSG', 'HTH', 'KPS', 'NYN', 'OCJ', 'OWA', ...
-%     'PAN', 'RRW', 'SAS', 'SMA', 'TJU'};
-
-%%Set these according to where your files are
-% indir = '/data0/stimuli/audio/bat/stimuli';
-% outdir = indir;
+% Generates BAT stimuli. Either returns stimulus waveform or writes stim
+% audio file to disk depending on input.
+%
+% Stimulus metronomes are constructed using actual ITIs from JI's tapping
+% to define 'on the beat.'
+%
+% Tempo cases are scaled. For faster tempo additional beeps are added at
+% end of the beep train using mean ITI as the IBI.
+%
+% Phase uses relative phase of surrounding ITIs.
+%
+% REQUIRED INPUTS:
+%   * deviation - percent of perturbation (integer); e.g., -10 = 10%
+%       shorter IBI (if tempo test) or 10% negative shift in phase (if phase test)
+%   * type - type of manipulation to be performed. 'B' for tempo or 'P' for phase
+%   * excerpts - names of musical stimuli (without .WAV extention) to be operated on
+%   * params - structure array containing the following fields:
+%       - ITI_fpath = file directory where beat timing data for each stim live
+%       - stim_fpath = file directory where stimulus audio files live
+%
+% OUTPUTS:
+%   * bat_stim - stimulus audio waveform with metronome beeps superimposed
+% ----------------
+% Majority of code written by John Iversen for mkbat2.m
+% Version 3 updates written 30 Sept 2016 by Brian K. Hurley
 
 toneFreq = 1000;
-toneDur = .100;
-riseFall = 0.005;
 
 % transform TYPE and EXCERPTS parameters to cells if not already
 if ~iscell(type)
@@ -40,7 +41,8 @@ n_excerpts = length(excerpts);
 % iterate through excerpts
 for iE = 1:n_excerpts
     
-    timing = batBeatTimes(excerpts{iE},params.IBI_fpath);
+    % get stimulus beat times
+    timing = batBeatTimes(excerpts{iE},params.ITI_fpath);
     taps = timing.t;
     ITIm = timing.IBI;
     
@@ -59,8 +61,8 @@ for iE = 1:n_excerpts
         switch type{iS},
             case 'B', %tempo manipulation
                 if deviation(iS) == 0 %on beat
-                    beats = taps;                    
-                else          
+                    beats = taps;
+                else
                     %scale tap times by deviation
                     tmp = taps - taps(1); %anchor on initial beat
                     tmp = tmp * (1+deviation(iS)/100);
@@ -70,11 +72,11 @@ for iE = 1:n_excerpts
                     else %faster, add extra beeps at mean ITI
                         extra = (beats(end)+ITIm):ITIm:stimlen*1000;
                         beats = [beats extra];
-                    end                    
+                    end
                 end
                 
             case 'P', %phase manipulation
-                ITI = diff(taps); 
+                ITI = diff(taps);
                 if deviation(iS) > 0, %shift after the beat
                     shift = [[ITI(1:end) ITIm]*deviation(iS)/100];
                 else %shift before the beat
@@ -86,9 +88,11 @@ for iE = 1:n_excerpts
         
         beats = beats/1000; %ms to s
         excerptFname = fullfile(params.stim_fpath,[excerpts{iE} '.WAV']);
+        
+        % generate stimulus audio file name (only used if we are saving audio files)
         outfname = fullfile(params.stim_fpath,[excerpts{iE} '_' type{iS} ...
-          num2str(deviation(iS)) '_v3.wav']);
-  
+            num2str(deviation(iS)) '_v3.wav']);
+        
         %superimpose beeps at times in beats vector
         bat_stim = mkbatstim_out(excerptFname, toneFreq, beats, outfname);
         
