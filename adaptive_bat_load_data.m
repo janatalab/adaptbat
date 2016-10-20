@@ -20,6 +20,13 @@ for isub = 1:nsubs
     % load subject data as table
     curr_fname = fullfile(params.data_fpath,batData_fnames{isub});
     this_sub_data = readtable(curr_fname);
+    
+    % if there is no trial_num variable in table, add trial_num column
+    if ~any(strcmp(this_sub_data.Properties.VariableNames, 'trial_num'))
+        n_trials = length(this_sub_data.response);
+        this_sub_data.trial_num = (1:n_trials)';
+    end
+    
     % if there is no subject variable in table, add subject column using file name
     if ~any(strcmp(this_sub_data.Properties.VariableNames,'subject_id'))
         

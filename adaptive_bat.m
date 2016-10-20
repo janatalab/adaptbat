@@ -101,8 +101,8 @@ for trial_number = 1:max_offbeat_trials
         
     else % else, generate stim w/ deviation specified by threshold algorithm
         
-        % randomize whether deviation is positive (faster) or
-        % negative (slower)
+        % randomize whether deviation is positive or
+        % negative
         dev_sign = randperm(2,1);
         switch dev_sign
             case 1

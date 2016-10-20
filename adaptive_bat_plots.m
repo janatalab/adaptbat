@@ -14,6 +14,10 @@ subids = unique(bat_thresh_data.subject_id);
 nsubs = length(subids);
 test_types = unique(bat_thresh_data.test); % all stims have 4 probe times
 
+% make separate data tables for the two test types
+tempo_thresh_data = bat_thresh_data(strcmp(bat_thresh_data.test, 'tempo'),:);
+phase_thresh_data = bat_thresh_data(strcmp(bat_thresh_data.test, 'phase'),:);
+
 nfig = 0;
 
 %% PLOT THRESHOLD TRAJECTORIES
@@ -128,9 +132,9 @@ if params.plot.subj_traj
                     end
                 elseif strcmp(this_test, 'phase')
                     if params.plot_abs_val
-                        set(gca,'ylim',[0 45])
+                        set(gca,'ylim',[0 50])
                     else
-                        set(gca,'ylim',[-45 45])
+                        set(gca,'ylim',[-50 50])
                     end
                 end
                 
@@ -170,10 +174,117 @@ if params.plot.subj_traj
     
 end % if params.plot.subj_traj
 
-if params.plot.mean_traj
+% distribution of stopping trial #
+if params.plot.trial_stop_dist    
+        
+    % trial number includes catch trials
     
+    %
+    % for both tests
+    %
+    nfig = nfig + 1;
+    figure(nfig),clf
+    
+    % keep y-axis consistent by setting limits based on main data set
+    max_y_val = max(hist(bat_thresh_data.trial_num))+1;
+    
+    h = histogram(bat_thresh_data.trial_num,13);
+    xlabel('Stop Trial', 'fontsize', 14)
+    ylabel('# Participants', 'fontsize', 14)    
+    title(sprintf('Trial Length for Adaptive BAT\n(phase and tempo tests)'), 'fontsize', 16)
+    
+    % plot mean as vertical red dashed line
+    mean_trial_num = mean(bat_thresh_data.trial_num);
+    line([mean_trial_num mean_trial_num],[0 max_y_val], 'color', 'r', ...
+        'linewidth', 2, 'linestyle', '--')
+    set(gca,'ylim', [0 (max_y_val)])
+    
+    % write to file
+    print(fullfile(params.fig_path,'adaptive_bat_stopTrialDist.eps'),'-depsc')
+    
+    
+    %
+    % for tempo test
+    %
+    nfig = nfig + 1;
+    figure(nfig),clf
+    
+    h = histogram(tempo_thresh_data.trial_num,13);
+    xlabel('Stop Trial', 'fontsize', 14)
+    ylabel('# Participants', 'fontsize', 14)
+    set(gca,'ylim', [0 (max_y_val+1)])
+    title(sprintf('Trial Length for Adaptive BAT Tempo Test'), 'fontsize', 16)
+    
+    % plot mean as vertical red dashed line
+    mean_trial_num = mean(tempo_thresh_data.trial_num);
+    line([mean_trial_num mean_trial_num],[0 max_y_val], 'color', 'r', ...
+        'linewidth', 2, 'linestyle', '--')
+    set(gca,'ylim', [0 (max_y_val)])
+    
+    % write to file
+    print(fullfile(params.fig_path,'adaptive_bat_stopTrialDist_tempo.eps'),'-depsc')
+    
+    
+    %
+    % for phase test
+    %
+    nfig = nfig + 1;
+    figure(nfig),clf
+    
+    h = histogram(phase_thresh_data.trial_num,13);
+    xlabel('Stop Trial', 'fontsize', 14)
+    ylabel('# Participants', 'fontsize', 14)    
+    set(gca,'ylim', [0 (max_y_val+1)])
+    title(sprintf('Trial Length for Adaptive BAT Phase Test'), 'fontsize', 16)
+    
+    % plot mean as vertical red dashed line
+    mean_trial_num = mean(phase_thresh_data.trial_num);
+    line([mean_trial_num mean_trial_num],[0 max_y_val], 'color', 'r', ...
+        'linewidth', 2, 'linestyle', '--')
+    set(gca,'ylim', [0 (max_y_val)])
+    
+    % write to file
+    print(fullfile(params.fig_path,'adaptive_bat_stopTrialDist_phase.eps'),'-depsc')
+    
+    close all
+end
+
+% categorical scatter of thresholds for tempo and phase perturbations
+if params.plot.final_thresh_scatter
+    nfig = nfig + 1;
+    figure(nfig),clf
+    one_vect = ones(size(tempo_thresh_data, 1), 1);
+    
+    % tempo data
+    h1 = plot(one_vect, tempo_thresh_data.abs_thresh, 'bo', 'markersize', 10);
+    
+    hold on    
+    
+    % phase data
+    two_vect = ones(size(phase_thresh_data, 1), 1) * 2;
+    h2 = plot(two_vect, phase_thresh_data.abs_thresh, 'bo', 'markersize', 10);
+    
+    % clean up axes & labels
+    xlabel('Perturbation Type', 'fontsize', 14);
+    set(gca,'xlim', [0.5 2.5])    
+    set(gca,'Xtick', [1 2])
+    set(gca,'xticklabel', {'Tempo', 'Phase'}, 'fontsize', 12)    
+    set(gca,'ylim', [0 50]);
+    ylabel('Off-Beat Detection Threshold (|% Change|)', 'fontsize', 14)
+    
+    % plot mean thresholds
+    mean_tempo_thresh = mean(tempo_thresh_data.abs_thresh);
+    mean_phase_thresh = mean(phase_thresh_data.abs_thresh);
+    h3 = plot(1, mean_tempo_thresh, 'r+', 'markersize', 11, 'linewidth', 2);
+    h4 = plot(2, mean_phase_thresh, 'r+', 'markersize', 11, 'linewidth', 2);
+    
+    % write to file
+    print(fullfile(params.fig_path,'adaptive_bat_threshXtest_scatter.eps'),'-depsc')
+    
+    close all
     
 end
+
 
 outData = [];
 
