@@ -49,12 +49,20 @@ if params.plot.subj_traj
             n_trials = length(sub_test_data.response);
             
             % create mask for test trials
-            test_trial_msk = ismember(sub_test_data.aug_cond,'offbeat');                        
+            test_trial_msk = ismember(sub_test_data.aug_cond,'offbeat');
+            test_trial_threshData = sub_test_data.thresh(test_trial_msk);
             % create mask for correct responses
             correct_resp_msk = ismember(sub_test_data.score,'correct');  
+            
             % get converged threshold
+            % if for some reason no convergence indicator exists, take last
+            % thresh estimate from test trial
             converged_msk = sub_test_data.converged == 1;
-            final_thresh = sub_test_data.thresh(converged_msk);
+            if ~sum(converged_msk) 
+                final_thresh = test_trial_threshData(end);
+            else
+                final_thresh = sub_test_data.thresh(converged_msk);
+            end
             
             % populate plotting data struct
             batTraj_data.(curr_test).subject_id{isub} = curr_sub;
