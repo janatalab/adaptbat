@@ -38,7 +38,8 @@ for isub = 1:nsubs
             subject_id = batData_fnames{isub}(1:ibi_fstub_idx-2);
         else
             subject_id = batData_fnames{isub}(1:phase_fstub_idx-2);
-        end        
+        end  
+        
         this_sub_data.subject_id = cell(size(this_sub_data,1),1);
         this_sub_data.subject_id(:) = deal({subject_id});
         
