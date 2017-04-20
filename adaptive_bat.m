@@ -180,7 +180,9 @@ for trial_number = 1:max_offbeat_trials
         
         % check for convergence.
         % if converged, stop the trial_number loop (i.e. stop delivering stims)
-        if sd_pdf <= params.zest.sd_stop || offbeat_trial_counter == max_offbeat_trials
+        % we won't let it converge until at least 7 trials have passed
+        if max_offbeat_trials >= 7 && sd_pdf <= params.zest.sd_stop || ...
+            offbeat_trial_counter == max_offbeat_trials
             resp_tbl.converged{trial_number} = 1;
             break
         else
