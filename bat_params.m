@@ -11,7 +11,7 @@ function params = bat_params
 % file handling
 % NOTE: file paths need to be changed when running BAT on a new computer
 params.stim_fpath = 'C:\Users\janatalab\Documents\BAT\stimuli';
-params.data_fpath = 'C:\Users\janatalab\Documents\BAT\subject_data\attmap_streamattend_div';
+params.data_fpath = 'C:\Users\janatalab\Documents\BAT\subject_data\attmap_streamattend';
 params.IBI_fpath = 'C:\Users\janatalab\Documents\svn\private\matlab\projects\attmap\bat\ITI';
 %% File Handling
 % 
