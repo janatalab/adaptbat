@@ -15,7 +15,7 @@ function params = bat_params
 % location of stimulus files
 params.stim_fpath = 'C:\Users\janatalab\Documents\BAT\stimuli'; 
 % location where data should be written
-params.data_fpath = 'C:\Users\janatalab\Documents\BAT\subject_data\attmap_altstim';
+params.data_fpath = 'C:\Users\janatalab\Documents\BAT\subject_data\attmap_streamattend';
 % location of file containing metronome event (ITI) times
 params.ITI_fpath = 'C:\Users\janatalab\Documents\svn\private\matlab\projects\attmap\bat\ITI';
 
